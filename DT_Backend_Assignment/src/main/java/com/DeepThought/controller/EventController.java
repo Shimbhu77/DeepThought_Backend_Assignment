@@ -1,6 +1,12 @@
 package com.DeepThought.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.DeepThought.exceptions.EventException;
 import com.DeepThought.model.Event;
@@ -23,6 +30,9 @@ public class EventController {
 
 	@Autowired
 	private EventService eventService;
+	
+	@Autowired
+	private ObjectMapper mapper;
 	
 	@GetMapping("/api/v3/app/events")
 	public ResponseEntity<Event> getEventById(@RequestParam("id") Integer id) throws EventException
@@ -49,17 +59,21 @@ public class EventController {
 	    }
 	
 	@PostMapping("/api/v3/app/events")
-	public ResponseEntity<Integer> createEvent(@RequestBody EventDTO dto) throws EventException
+	public ResponseEntity<Integer> createEvent(@RequestParam("eventData")  String data ,@RequestParam("image") MultipartFile file) throws EventException, IllegalStateException, IOException
 	{
-		Integer event_id = eventService.createEvent(dto);
+		EventDTO dto = mapper.readValue(data,EventDTO.class);
+		
+		Integer event_id = eventService.createEvent(dto,file);
 		
 		return new ResponseEntity<Integer>(event_id,HttpStatus.CREATED);
 		
 	}
 	@PutMapping("/api/v3/app/events/{id}")
-	public ResponseEntity<Integer> updateEvent(@RequestBody EventDTO dto,@PathVariable("id") Integer id) throws EventException
+	public ResponseEntity<Integer> updateEvent(@RequestParam("eventData")  String data ,@RequestParam("image") MultipartFile file,@PathVariable("id") Integer id) throws EventException, IllegalStateException, IOException
 	{
-		Integer event_id = eventService.updateEvent(dto,id);
+		EventDTO dto = mapper.readValue(data,EventDTO.class);
+		
+		Integer event_id = eventService.updateEvent(dto,file,id);
 		
 		return new ResponseEntity<Integer>(event_id,HttpStatus.ACCEPTED);
 		
