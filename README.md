@@ -5,7 +5,7 @@
 GET /api/v3/app/events?id=:event_id
 ```
 Returns an event based on its unique ID.
-
+ 
 ### Get Latest Events
 ```
 GET /api/v3/app/event?type=latest&limit=5&page=1
