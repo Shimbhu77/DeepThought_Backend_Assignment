@@ -31,6 +31,7 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
 		log.info("inside generator filter ....");
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println("auth obj : "+authentication);
         if (null != authentication) {
         	
         	System.out.println("authentication "+authentication);
